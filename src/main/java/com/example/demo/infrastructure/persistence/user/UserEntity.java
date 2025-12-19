@@ -18,6 +18,9 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -30,8 +33,9 @@ public class UserEntity {
     @Column
     private String phoneNumber;
 
-    private UserEntity(Long id, String email, String password, String country, String phoneNumber) {
+    private UserEntity(Long id, String name, String email, String password, String country, String phoneNumber) {
         this.id = id;
+        this.name = name;
         this.email = email;
         this.password = password;
         this.country = country;
@@ -44,6 +48,7 @@ public class UserEntity {
     public static UserEntity from(User user) {
         return new UserEntity(
                 user.getId(),
+                user.getName(),
                 user.getEmail().value(),
                 user.getPassword().value(),
                 user.getCountry(),
@@ -57,6 +62,7 @@ public class UserEntity {
     public User toDomain() {
         return User.reconstitute(
                 this.id,
+                this.name,
                 new Email(this.email),
                 new Password(this.password),
                 this.country,

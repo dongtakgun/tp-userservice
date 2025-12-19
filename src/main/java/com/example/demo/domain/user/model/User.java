@@ -9,19 +9,20 @@ import lombok.Getter;
 public class User {
 
     private final Long id;
+    private final String name;
     private final Email email;
     private final Password password;
     private final String country;
     private final String phoneNumber;
 
 
-    public static User create(Email email, Password password, String country, String phoneNumber) {
-        return new User(null, email, password, country, phoneNumber);
+    public static User create(String name, Email email, Password password, String country, String phoneNumber) {
+        return new User(null, name, email, password, country, phoneNumber);
     }
 
 
-    public static User reconstitute(Long id, Email email, Password password, String country, String phoneNumber) {
-        return new User(id, email, password, country, phoneNumber);
+    public static User reconstitute(Long id, String name, Email email, Password password, String country, String phoneNumber) {
+        return new User(id, name, email, password, country, phoneNumber);
     }
 
 
