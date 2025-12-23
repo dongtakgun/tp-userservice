@@ -1,6 +1,7 @@
 package com.example.demo.presentation.user;
 
 import com.example.demo.application.user.UserService;
+import com.example.demo.application.user.dto.LoginResponse;
 import com.example.demo.application.user.dto.UserResponse;
 import com.example.demo.presentation.user.request.LoginRequest;
 import com.example.demo.presentation.user.request.SignUpRequest;
@@ -40,8 +41,8 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "401", description = "이메일 또는 비밀번호 불일치")})
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@Valid @RequestBody LoginRequest request) {
-        UserResponse response = userService.login(request.toCommand());
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        LoginResponse response = userService.login(request.toCommand());
         return ResponseEntity.ok(response);
     }
 }

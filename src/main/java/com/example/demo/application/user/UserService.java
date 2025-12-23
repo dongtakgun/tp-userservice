@@ -1,16 +1,19 @@
 package com.example.demo.application.user;
 
 import com.example.demo.application.user.dto.LoginCommand;
+import com.example.demo.application.user.dto.LoginResponse;
 import com.example.demo.application.user.dto.SignUpCommand;
 import com.example.demo.application.user.dto.UserResponse;
 import com.example.demo.domain.user.model.Email;
 import com.example.demo.domain.user.model.Password;
 import com.example.demo.domain.user.model.User;
 import com.example.demo.domain.user.repository.UserRepository;
+import kr.tpdo.afg.infrastructure.security.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.demo.domain.user.model.AuthToken;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
 
     @Transactional
@@ -43,7 +47,7 @@ public class UserService {
     }
 
 
-    public UserResponse login(LoginCommand command) {
+    public LoginResponse login(LoginCommand command) {
         Email email = new Email(command.email());
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다."));
@@ -57,7 +61,11 @@ public class UserService {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 올바르지 않습니다.");
         }
 
-        return UserResponse.from(user);
+        String accessToken = jwtTokenProvider.createAccessToken(user.getEmail().value());
+        String refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail().value());
+        AuthToken authToken = new AuthToken(accessToken, refreshToken);
+
+        return LoginResponse.of(user, authToken);
     }
 }
 
